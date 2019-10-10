@@ -21,17 +21,18 @@ train_raw_tbl %>% glimpse()
 View(definitions_raw_tbl)
 
 definitions_tbl <- definitions_raw_tbl %>%
-    fill(X__1, .direction = "down") %>%
-    filter(!is.na(X__2)) %>%
-    separate(X__2, into = c("key", "value"), sep = " '", remove = TRUE) %>%
-    rename(column_name = X__1) %>%
+    fill(...1, .direction = "down") %>%
+    filter(!is.na(...2)) %>%
+    separate(...2, into = c("key", "value"), sep = " '", remove = TRUE) %>%
+    rename(column_name = ...1) %>%
     mutate(key = as.numeric(key)) %>%
     mutate(value = value %>% str_replace(pattern = "'", replacement = ""))
 definitions_tbl
 
 definitions_list <- definitions_tbl %>%
     split(.$column_name) %>%
-    map(~ select(., -column_name)) %>%
+    map(~ select(., -column_name)) %>% 
+     
     map(~ mutate(., value = as_factor(value))) 
 definitions_list
 
@@ -84,10 +85,10 @@ train_raw_tbl -> data
 process_hr_data_readable <- function(data, definitions_tbl) {
     
     definitions_list <- definitions_tbl %>%
-        fill(X__1, .direction = "down") %>%
-        filter(!is.na(X__2)) %>%
-        separate(X__2, into = c("key", "value"), sep = " '", remove = TRUE) %>%
-        rename(column_name = X__1) %>%
+        fill(...1, .direction = "down") %>%
+        filter(!is.na(...2)) %>%
+        separate(...2, into = c("key", "value"), sep = " '", remove = TRUE) %>%
+        rename(column_name = ...1) %>%
         mutate(key = as.numeric(key)) %>%
         mutate(value = value %>% str_replace(pattern = "'", replacement = "")) %>%
         split(.$column_name) %>%

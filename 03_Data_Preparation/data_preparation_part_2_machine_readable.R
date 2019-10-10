@@ -74,6 +74,16 @@ recipe_obj <- recipe(Attrition ~ ., data = train_readable_tbl) %>%
 
 recipe_obj
 
+#prep will show the variables removed by Zero Variance Filter
+
+recipe_obj %>% 
+    prep()
+
+#bake will remove the variables 
+#recipe_obj %>% 
+    #prep() %>% 
+    #bake(newdata=test_readable_tbl)
+
 # 2. Transformations ---- 
 
 skewed_feature_names <- train_readable_tbl %>%
@@ -107,7 +117,7 @@ factor_names <- c("JobLevel", "StockOptionLevel")
 
 factor_names
 
-
+#transforming skewed features using "YeoJohnson"
 recipe_obj <- recipe(Attrition ~ ., data = train_readable_tbl) %>%
     step_zv(all_predictors()) %>%
     step_YeoJohnson(skewed_feature_names) %>%
@@ -132,6 +142,11 @@ recipe_obj <- recipe(Attrition ~ ., data = train_readable_tbl) %>%
     step_center(all_numeric()) %>%
     step_scale(all_numeric())
 
+prepared_recipe <-recipe_obj %>% 
+    prep()
+    
+# to see what prep step is doing use STEP to check whatever step you want
+
 recipe_obj$steps[[4]] # before prep
 
 prepared_recipe <- recipe_obj %>% prep()
@@ -145,6 +160,7 @@ prepared_recipe %>%
 
 # 4. Dummy Variables ----
  
+#previous recipe from previous step
 recipe_obj <- recipe(Attrition ~ ., data = train_readable_tbl) %>%
     step_zv(all_predictors()) %>%
     step_YeoJohnson(skewed_feature_names) %>%
@@ -154,12 +170,14 @@ recipe_obj <- recipe(Attrition ~ ., data = train_readable_tbl) %>%
 
 recipe_obj
 
+#checking jobrole to explain the need for dummy coding as it has 0-9 levels
 recipe_obj %>% 
     prep() %>%
     bake(newdata = train_readable_tbl) %>%
     select(contains("JobRole")) %>%
     plot_hist_facet()
 
+#dummied recipe 
 dummied_recipe_obj <- recipe(Attrition ~ ., data = train_readable_tbl) %>%
     step_zv(all_predictors()) %>%
     step_YeoJohnson(skewed_feature_names) %>%
@@ -182,6 +200,7 @@ dummied_recipe_obj %>%
     select(contains("JobRole")) %>%
     glimpse()
 
+#finally updating recipe to finish dummy step
 recipe_obj <- recipe(Attrition ~ ., data = train_readable_tbl) %>%
     step_zv(all_predictors()) %>%
     step_YeoJohnson(skewed_feature_names) %>%
