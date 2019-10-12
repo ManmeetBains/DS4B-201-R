@@ -29,7 +29,7 @@ source("00_Scripts/data_processing_pipeline.R")
 train_readable_tbl <- process_hr_data_readable(train_raw_tbl, definitions_raw_tbl)
 test_readable_tbl  <- process_hr_data_readable(test_raw_tbl, definitions_raw_tbl)
 
-# ML Preprocessing 
+# ML Preprocessing .(H2O does most of the pre-processing itself)
 
 recipe_obj <- recipe(Attrition ~ ., data = train_readable_tbl) %>%
     step_zv(all_predictors()) %>%
@@ -39,13 +39,11 @@ recipe_obj <- recipe(Attrition ~ ., data = train_readable_tbl) %>%
 recipe_obj
 
 
-train_tbl <- bake(recipe_obj, newdata = train_readable_tbl)
-test_tbl  <- bake(recipe_obj, newdata = test_readable_tbl)
-
 
 # 2. Modeling ----
 
 h2o.init()
+
 
 split_h2o <- h2o.splitFrame(as.h2o(train_tbl), ratios = c(0.85), seed = 1234)
 
@@ -74,30 +72,41 @@ automl_models_h2o@leaderboard
 
 automl_models_h2o@leader
 
-h2o.getModel("GLM_grid_0_AutoML_20180503_035824_model_0")
+h2o.getModel("GLM_grid_1_AutoML_20191012_013036_model_1")
 
-h2o.getModel("DeepLearning_0_AutoML_20180503_035824")
+h2o.getModel("DeepLearning_1_AutoML_20191012_013036")
 
+# to get model details by position
+automl_models_h2o@leaderboard %>% 
+    as.tibble() %>% 
+    slice(3) %>% 
+    pull(model_id) %>% 
+    h2o.getModel()
 
 # Saving & Loading
 
-h2o.getModel("StackedEnsemble_BestOfFamily_0_AutoML_20180503_035824") %>%
+h2o.getModel("StackedEnsemble_BestOfFamily_AutoML_20191012_013036") %>%
     h2o.saveModel(path = "04_Modeling/h2o_models/")
 
-h2o.getModel("GLM_grid_0_AutoML_20180503_035824_model_0") %>%
+h2o.getModel("GLM_grid_1_AutoML_20191012_013036_model_1") %>%
     h2o.saveModel(path = "04_Modeling/h2o_models/")
 
-h2o.getModel("DeepLearning_0_AutoML_20180503_035824") %>%
+h2o.getModel("GBM_5_AutoML_20191012_013036") %>%
     h2o.saveModel(path = "04_Modeling/h2o_models/")
 
-deeplearning_h2o <- h2o.loadModel("04_Modeling/h2o_models/DeepLearning_0_AutoML_20180503_035824")
+h2o.getModel("DeepLearning_1_AutoML_20191012_013036") %>%
+    h2o.saveModel(path = "04_Modeling/h2o_models/")
 
-glm_h2o <- h2o.loadModel("04_Modeling/h2o_models/GLM_grid_0_AutoML_20180503_035824_model_0")
+#Loading Models
+
+deeplearning_h2o <- h2o.loadModel("04_Modeling/h2o_models/DeepLearning_1_AutoML_20191012_013036")
+
+glm_h2o <- h2o.loadModel("04_Modeling/h2o_models/GLM_grid_1_AutoML_20191012_013036_model_1")
 
 
 # Making Predictions
 
-stacked_ensemble_h2o <- h2o.loadModel("04_Modeling/h2o_models/StackedEnsemble_BestOfFamily_0_AutoML_20180503_035824")
+stacked_ensemble_h2o <- h2o.loadModel("04_Modeling/h2o_models/StackedEnsemble_BestOfFamily_AutoML_20191012_013036")
 
 stacked_ensemble_h2o
 
