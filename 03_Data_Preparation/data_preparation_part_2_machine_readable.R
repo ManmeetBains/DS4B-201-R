@@ -302,7 +302,7 @@ plot_cor <- function(data, target, fct_reorder = FALSE, fct_rev = FALSE,
 }
 
 train_tbl %>%
-    select(Attrition_Yes, contains("JobRole")) %>%
+    select(Attrition_Yes, contains("JobRole")) %>% 
     plot_cor(target = Attrition_Yes, fct_reorder = T, fct_rev = F)
 
 # Correlation Evaluation ----
