@@ -209,11 +209,11 @@ automl_models_h2o@leaderboard %>%
 
 # 4. Assessing Performance ----
 
-stacked_ensemble_h2o <- h2o.loadModel("04_Modeling/h2o_models/StackedEnsemble_BestOfFamily_0_AutoML_20180503_035824")
+stacked_ensemble_h2o <- h2o.loadModel("04_Modeling/h2o_models/StackedEnsemble_BestOfFamily_AutoML_20191012_013036")
 
-deeplearning_h2o <- h2o.loadModel("04_Modeling/h2o_models/DeepLearning_0_AutoML_20180503_035824")
+deeplearning_h2o <- h2o.loadModel("04_Modeling/h2o_models/DeepLearning_1_AutoML_20191012_013036")
 
-glm_h2o <- h2o.loadModel("04_Modeling/h2o_models/GLM_grid_0_AutoML_20180503_035824_model_0")
+glm_h2o <- h2o.loadModel("04_Modeling/h2o_models/GLM_grid_1_AutoML_20191012_013036_model_1")
 
 
 
